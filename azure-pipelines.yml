@@ -23,8 +23,11 @@ steps:
   inputs:
     script: |
       npm install
-      npm run build
 
+- task: CmdLine@2
+  inputs:
+    script: |
+      npm run build
 
 - task: ArchiveFiles@2
   inputs:
