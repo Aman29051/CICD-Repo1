@@ -11,8 +11,8 @@ variables:
   uiBuild: '$(uiSource)/build'
 
 pool:
-  name: localhost
-  agent: linux
+  name: Default
+  agent: cicd-project-agent
 
 steps:
 - task: NodeTool@0
