@@ -19,12 +19,12 @@ steps:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-- script: |
-    pushd $(uiSource)
-    pwd
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+- task: CmdLine@2
+  inputs:
+    script: |
+      npm install
+      npm run build
+
 
 - task: ArchiveFiles@2
   inputs:
