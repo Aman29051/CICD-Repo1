@@ -46,3 +46,11 @@ steps:
     globExpressions: 'deploy.zip'
     createBucket: true
 
+- script: |
+  # Install AWS CLI (if not already installed)
+  pip install awscli
+
+  # Unzip the artifact using AWS CLI
+  aws s3 cp s3://azure-cicd-connection-winjit/deploy.zip .
+  unzip deploy.zip -d unzipped_artifacts
+  displayName: 'Unzip Artifacts'
