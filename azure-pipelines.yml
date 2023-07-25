@@ -1,10 +1,5 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
-- main
+  - main
 
 variables:
   uiSource: 'src'
@@ -14,43 +9,44 @@ pool:
   agent: cicd-project-agent
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x'
-  displayName: 'Install Node.js'
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Install Node.js'
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      npm install
+  - task: CmdLine@2
+    inputs:
+      script: |
+        npm install
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      npm run build
+  - task: CmdLine@2
+    inputs:
+      script: |
+        npm run build
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/build'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/deploy.zip'
-    replaceExistingArchive: true
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Build.SourcesDirectory)/build'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/deploy.zip'
+      replaceExistingArchive: true
 
-- task: S3Upload@1
-  inputs:
-    awsCredentials: 'aws_iam_user'
-    regionName: 'us-east-1'
-    bucketName: 'azure-cicd-connection-winjit'
-    sourceFolder: '$(Build.ArtifactStagingDirectory)'
-    globExpressions: 'deploy.zip'
-    createBucket: true
+  - task: S3Upload@1
+    inputs:
+      awsCredentials: 'aws_iam_user'
+      regionName: 'us-east-1'
+      bucketName: 'azure-cicd-connection-winjit'
+      sourceFolder: '$(Build.ArtifactStagingDirectory)'
+      globExpressions: 'deploy.zip'
+      createBucket: true
 
-- script: |
-  # Install AWS CLI (if not already installed)
-  pip install awscli
+  - script: |
+      # Install AWS CLI (if not already installed)
+      pip install awscli
 
-  # Unzip the artifact using AWS CLI
-  aws s3 cp s3://azure-cicd-connection-winjit/deploy.zip .
-  unzip deploy.zip -d unzipped_artifacts
-  displayName: 'Unzip Artifacts'
+      # Unzip the artifact using AWS CLI
+      aws s3 cp s3://azure-cicd-connection-winjit/deploy.zip .
+      unzip deploy.zip -d unzipped_artifacts
+
+    displayName: 'Unzip Artifacts'
