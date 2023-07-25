@@ -40,16 +40,16 @@ steps:
       Expand-Archive -Path $(Build.ArtifactStagingDirectory)/deploy.zip -DestinationPath $(Build.ArtifactStagingDirectory)/unzipped_artifacts
     displayName: 'Unzip Artifacts'
 
-  - script: |
-      aws s3 sync $(Build.ArtifactStagingDirectory)/unzipped_artifacts s3://azure-cicd-connection-winjit/
-    displayName: 'Upload Unzipped Artifacts'
+  # - script: |
+  #     aws s3 sync $(Build.ArtifactStagingDirectory)/unzipped_artifacts s3://azure-cicd-connection-winjit/
+  #   displayName: 'Upload Unzipped Artifacts'
 
-  # - task: S3Upload@1
-  #   inputs:
-  #     awsCredentials: 'aws_iam_user'
-  #     regionName: 'us-east-1'
-  #     bucketName: 'azure-cicd-connection-winjit'
-  #     sourceFolder: '$(Build.ArtifactStagingDirectory)'
-  #     globExpressions: 'deploy.zip'
-  #     createBucket: true
+  - task: S3Upload@1
+    inputs:
+      awsCredentials: 'aws_iam_user'
+      regionName: 'us-east-1'
+      bucketName: 'azure-cicd-connection-winjit'
+      sourceFolder: '$(Build.ArtifactStagingDirectory)/unzipped_artifacts'
+      globExpressions: '**'
+      createBucket: true
 
