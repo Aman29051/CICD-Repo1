@@ -36,8 +36,8 @@ steps:
       python.exe -m pip install --upgrade pip
     displayName: 'Update pip'
 
-  - script: |
-      Expand-Archive -Path deploy.zip -DestinationPath $(Build.ArtifactStagingDirectory)/unzipped_artifacts
+  - powershell: |
+      Expand-Archive -Path $(Build.ArtifactStagingDirectory)/deploy.zip -DestinationPath $(Build.ArtifactStagingDirectory)/unzipped_artifacts
     displayName: 'Unzip Artifacts'
 
   - script: |
