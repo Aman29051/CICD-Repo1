@@ -34,12 +34,15 @@ steps:
     rootFolderOrFile: '$(Build.SourcesDirectory)/build'
     includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/deploy.zip'
     replaceExistingArchive: true
-  
-    
-- task: PublishBuildArtifacts@1
+
+- task: S3Upload@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    awsCredentials: 'aws_iam_user'
+    regionName: 'us-east-1'
+    bucketName: 'azure-cicd-connection-winjit'
+    sourceFolder: '$(Build.ArtifactStagingDirectory)'
+    globExpressions: 'deploy.zip'
+    createBucket: true
+
