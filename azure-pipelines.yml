@@ -31,22 +31,25 @@ steps:
       archiveType: 'zip'
       archiveFile: '$(Build.ArtifactStagingDirectory)/deploy.zip'
       replaceExistingArchive: true
-
-  - task: S3Upload@1
-    inputs:
-      awsCredentials: 'aws_iam_user'
-      regionName: 'us-east-1'
-      bucketName: 'azure-cicd-connection-winjit'
-      sourceFolder: '$(Build.ArtifactStagingDirectory)'
-      globExpressions: 'deploy.zip'
-      createBucket: true
+  
+  - script: |
+      python.exe -m pip install --upgrade pip
+    displayName: 'Update pip'
 
   - script: |
-      # Install AWS CLI (if not already installed)
-      pip install awscli
-
-      # Unzip the artifact using AWS CLI
-      aws s3 cp s3://azure-cicd-connection-winjit/deploy.zip .
-      unzip deploy.zip -d unzipped_artifacts
-
+      Expand-Archive -Path deploy.zip -DestinationPath $(Build.ArtifactStagingDirectory)/unzipped_artifacts
     displayName: 'Unzip Artifacts'
+
+  - script: |
+      aws s3 sync $(Build.ArtifactStagingDirectory)/unzipped_artifacts s3://azure-cicd-connection-winjit/
+    displayName: 'Upload Unzipped Artifacts'
+
+  # - task: S3Upload@1
+  #   inputs:
+  #     awsCredentials: 'aws_iam_user'
+  #     regionName: 'us-east-1'
+  #     bucketName: 'azure-cicd-connection-winjit'
+  #     sourceFolder: '$(Build.ArtifactStagingDirectory)'
+  #     globExpressions: 'deploy.zip'
+  #     createBucket: true
+
